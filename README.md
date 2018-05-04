@@ -2,8 +2,8 @@
 
 Returns the current application git commit SHA. Will look first in the APP_REVISION
 environment variable, then in the REVISION file written by Capsitrano, then
-in the Git history and lastly will return 'unknown' will be returned
- 
+in the Git history and lastly will return `unknown`
+
 # Installation
 
 Add this line to your application's Gemfile:
