@@ -4,7 +4,11 @@ require "app_revision/version"
 # environment variable, then in the REVISION file written by Capsitrano, then
 # in the Git history and lastly will return 'unknown' will be returned
 module AppRevision
-  ENV_VARS = ['APP_REVISION', 'HEROKU_REVISION']
+  ENV_VARS = [
+    'APP_REVISION', # As used by Appsignal et al
+    'HEROKU_SLUG_COMMIT', # As is available in https://devcenter.heroku.com/articles/dyno-metadata
+    'TRAVIS_COMMIT', # As per https://docs.travis-ci.com/user/environment-variables/
+  ]
 
   # Calls `determine_current` with memoization.
   def self.current
