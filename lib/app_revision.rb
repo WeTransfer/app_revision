@@ -7,6 +7,7 @@ module AppRevision
   ENV_VARS = [
     'APP_REVISION', # As used by Appsignal et al
     'HEROKU_SLUG_COMMIT', # As is available in https://devcenter.heroku.com/articles/dyno-metadata
+    'SOURCE_VERSION', # As defined in https://devcenter.heroku.com/changelog-items/630
     'TRAVIS_COMMIT', # As per https://docs.travis-ci.com/user/environment-variables/
   ]
 
