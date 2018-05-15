@@ -19,6 +19,12 @@ RSpec.describe AppRevision do
 
 
   describe 'with each environment variable that can be used' do
+    before :each do
+      AppRevision::ENV_VARS.each do |ev|
+        ENV.delete(ev)
+      end
+    end
+
     AppRevision::ENV_VARS.each do |ev|
       it "only uses the SHA component from #{ev} up to but excluding the newline" do
         ENV[ev] = "43ec44d89706ca948daea5124fdcc62694a87f43\na85f99a"
