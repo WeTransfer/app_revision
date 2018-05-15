@@ -48,8 +48,7 @@ module AppRevision
   end
 
   def self.read_from_revision_file
-    my_directory = File.dirname(__FILE__)
-    my_location = File.split(File.expand_path(my_directory))
+    my_location = File.split(File.expand_path(Dir.pwd))
     begin
       File.read(File.join(my_location + ['REVISION'])).chomp
     rescue Errno::ENOENT

@@ -1,3 +1,6 @@
+require 'tmpdir'
+require 'tempfile'
+
 RSpec.describe AppRevision do
   it "has a version number" do
     expect(AppRevision::VERSION).not_to be nil
@@ -5,6 +8,12 @@ RSpec.describe AppRevision do
 
   before :each do
     @app_revision_location = AppRevision.method(:current).source_location[0]
+  end
+
+  before :each do
+    AppRevision::ENV_VARS.each do |ev|
+      ENV.delete(ev)
+    end
   end
 
   it 'always provides a string value from .current' do
@@ -19,12 +28,6 @@ RSpec.describe AppRevision do
 
 
   describe 'with each environment variable that can be used' do
-    before :each do
-      AppRevision::ENV_VARS.each do |ev|
-        ENV.delete(ev)
-      end
-    end
-
     AppRevision::ENV_VARS.each do |ev|
       it "only uses the SHA component from #{ev} up to but excluding the newline" do
         ENV[ev] = "43ec44d89706ca948daea5124fdcc62694a87f43\na85f99a"
@@ -48,8 +51,25 @@ RSpec.describe AppRevision do
     expect(AppRevision.determine_current).to eq('unknown')
   end
 
-  it 'returns the contents of the REVISION without the newline' do
-    ENV.delete('APP_REVISION')
+  it 'returns the contents of the REVISION file relative to the current working directory' do
+    cur = Dir.pwd
+    tempdir = Dir.mktmpdir
+    Dir.chdir(tempdir)
+    written_git_ref = "zz43ec44d89706ca948daea5124fdcc62694a87f4\na85f99a"
+    known_rev = "zz43ec44d89706ca948daea5124fdcc62694a87f4"
+
+    # Write the file that AppRevisio will read
+    File.open('REVISION', 'wb') {|f| f << written_git_ref }
+
+    tf = Tempfile.new('readback')
+    tf << AppRevision.determine_current
+    tf.rewind
+
+    expect(tf.read).to eq(known_rev)
+    Dir.chdir(cur)
+  end
+
+  it 'returns the contents of the REVISION file relative to the app revsion location' do
     revision_file_path = File.dirname(File.dirname(@app_revision_location)) + "/REVISION"
 
     begin
