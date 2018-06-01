@@ -1,4 +1,4 @@
-require "app_revision/version"
+require 'app_revision/version'
 
 # Returns the current application git commit SHA. Will look first in the APP_REVISION
 # environment variable, then in the REVISION file written by Capsitrano, then
@@ -24,22 +24,20 @@ module AppRevision
     up_to_newline(detected_rev_str)
   end
 
-  private
-
-  def self.up_to_newline(str)
+  private_class_method def self.up_to_newline(str)
     str.scan(/[a-z0-9\-]+/)[0]
   end
 
-  def self.unknown_revision
+  private_class_method def self.unknown_revision
     'unknown'
   end
-  
-  def self.determine_from_git_rev
+
+  private_class_method def self.determine_from_git_rev
     cmd_output = `git rev-parse --verify HEAD`.strip
     return cmd_output if cmd_output =~ /^[a-f\d]{40}$/
   end
 
-  def self.read_from_env
+  private_class_method def self.read_from_env
     ENV_VARS.each do |envvar|
       envvar_value = ENV.fetch(envvar, '').strip
       return envvar_value unless envvar_value.empty?
@@ -47,16 +45,15 @@ module AppRevision
     nil
   end
 
-  def self.read_from_revision_file
+  private_class_method def self.read_from_revision_file
     search_path = Rails.root.to_s if defined?(Rails.root)
     search_path ||= Dir.pwd
-
     path_components = File.split(File.expand_path(search_path))
     begin
       File.read(File.join(path_components + ['REVISION'])).chomp
     rescue Errno::ENOENT
       if path_components.empty?
-        return nil
+        return
       else
         path_components.pop # Remove the last path part and try again
         retry

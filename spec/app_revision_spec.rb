@@ -2,7 +2,7 @@ require 'tmpdir'
 require 'tempfile'
 
 RSpec.describe AppRevision do
-  it "has a version number" do
+  it 'has a version number' do
     expect(AppRevision::VERSION).not_to be nil
   end
 
@@ -26,7 +26,6 @@ RSpec.describe AppRevision do
     ENV.delete('APP_REVISION')
   end
 
-
   describe 'with each environment variable that can be used' do
     AppRevision::ENV_VARS.each do |ev|
       it "only uses the SHA component from #{ev} up to but excluding the newline" do
@@ -36,7 +35,7 @@ RSpec.describe AppRevision do
       end
 
       it "does not use #{ev} if it is empty" do
-        ENV[ev] = "   "
+        ENV[ev] = '   '
         expect(AppRevision.determine_current).not_to be_empty
         ENV.delete(ev)
       end
@@ -56,10 +55,10 @@ RSpec.describe AppRevision do
     tempdir = Dir.mktmpdir
     Dir.chdir(tempdir)
     written_git_ref = "zz43ec44d89706ca948daea5124fdcc62694a87f4\na85f99a"
-    known_rev = "zz43ec44d89706ca948daea5124fdcc62694a87f4"
+    known_rev = 'zz43ec44d89706ca948daea5124fdcc62694a87f4'
 
     # Write the file that AppRevisio will read
-    File.open('REVISION', 'wb') {|f| f << written_git_ref }
+    File.open('REVISION', 'wb') { |f| f << written_git_ref }
 
     tf = Tempfile.new('readback')
     tf << AppRevision.determine_current
@@ -70,10 +69,10 @@ RSpec.describe AppRevision do
   end
 
   it 'returns the contents of the REVISION file relative to the app revsion location' do
-    revision_file_path = File.dirname(File.dirname(@app_revision_location)) + "/REVISION"
+    revision_file_path = File.dirname(File.dirname(@app_revision_location)) + '/REVISION'
 
     begin
-      File.open(revision_file_path, "w") do |f|
+      File.open(revision_file_path, 'w') do |f|
         f << "43ec44d89706ca948daea5124fdcc62694a87f43\na85f99a"
       end
       expect(AppRevision.determine_current).to eq('43ec44d89706ca948daea5124fdcc62694a87f43')
