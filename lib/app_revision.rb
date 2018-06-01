@@ -48,14 +48,17 @@ module AppRevision
   end
 
   def self.read_from_revision_file
-    my_location = File.split(File.expand_path(Dir.pwd))
+    search_path = Rails.root.to_s if defined?(Rails.root)
+    search_path ||= Dir.pwd
+
+    path_components = File.split(File.expand_path(search_path))
     begin
-      File.read(File.join(my_location + ['REVISION'])).chomp
+      File.read(File.join(path_components + ['REVISION'])).chomp
     rescue Errno::ENOENT
-      my_location.pop # Remove the last path part and try again
-      if my_location.empty?
+      if path_components.empty?
         return nil
       else
+        path_components.pop # Remove the last path part and try again
         retry
       end
     end
